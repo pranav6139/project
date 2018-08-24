@@ -2,7 +2,9 @@ package com.product.project.controller;
 
 import com.product.project.model.Product;
 import com.product.project.repository.ProductRepository;
+import com.product.project.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,48 +17,49 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @Autowired
+    ProductService productService;
+
+    @Autowired
     public void setProductRepository(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
     @RequestMapping("/login")
     public String login() {
-        return "login";
+         return productService.login();
     }
 
     @RequestMapping(path = "/")
     public String index() {
-        return "index";
+        return productService.index();
     }
 
     @RequestMapping(path = "/products/add", method = RequestMethod.GET)
     public String createProduct(Model model) {
         model.addAttribute("product", new Product());
-        return "edit";
+        return productService.createProduct();
     }
 
     @RequestMapping(path = "products", method = RequestMethod.POST)
     public String saveProduct(Product product) {
-        productRepository.save(product);
-        return "redirect:/products";
+        return productService.saveProduct(product);
     }
 
     @RequestMapping(path = "/products", method = RequestMethod.GET)
     public String getAllProducts(Model model) {
-        model.addAttribute("products", productRepository.findAll());
+        model.addAttribute("products",productService.getAllProducts());
         return "products";
     }
 
     @RequestMapping(path = "/products/edit/{id}", method = RequestMethod.GET)
     public String editProduct(Model model, @PathVariable(value = "id") String id) {
-        model.addAttribute("product", productRepository.findById(id));
+        model.addAttribute("product",productService.editProduct(id));
         return "edit";
     }
 
     @RequestMapping(path = "/products/delete/{id}", method = RequestMethod.GET)
     public String deleteProduct(@PathVariable(name = "id") String id) {
-        productRepository.deleteById(id);
-        return "redirect:/products";
+        return productService.deleteProduct(id);
     }
 
 }
