@@ -18,6 +18,7 @@
                     <ul class="nav navbar-nav">
                         <li><a th:href="@{/products}">Products List</a></li>
                         <li><a th:href="@{/products/add}" sec:authorize="hasAuthority('ADMIN')">Create Product</a></li>
+                        <li><a th:href="@{/shoppingCart}" sec:authorize="hasAuthority('USER')">My Cart</a></li>
                     </ul>
                 </div>
             </div>

@@ -19,7 +19,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @Configuration
 @EnableWebSecurity
 @ComponentScan("com.product.project")
-@Profile("dev")
+//@Profile("dev")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                     .formLogin()
                     .loginPage("/login")
-                    .defaultSuccessUrl("/")
+                    .defaultSuccessUrl("/shoppingCart",true)
                     .permitAll()
                     .and()
                     .logout()

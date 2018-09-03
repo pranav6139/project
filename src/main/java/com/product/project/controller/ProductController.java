@@ -1,5 +1,6 @@
 package com.product.project.controller;
 
+import com.product.project.model.MyFormObject;
 import com.product.project.model.Product;
 import com.product.project.repository.ProductRepository;
 import com.product.project.service.ProductService;
@@ -7,9 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 public class ProductController {
@@ -27,6 +29,11 @@ public class ProductController {
     @RequestMapping("/login")
     public String login() {
          return productService.login();
+    }
+
+    @RequestMapping("/filter")
+    public String filter() {
+        return productService.filter();
     }
 
     @RequestMapping(path = "/")
@@ -51,15 +58,42 @@ public class ProductController {
         return "products";
     }
 
+//    @GetMapping("/products/search")
+//    public String getProduct(Model model, @ModelAttribute("myFormObject") MyFormObject myFormObject,
+//                             BindingResult result) {
+//        List<Product> products = this.productService.getAllProducts(myFormObject.getPName());
+//        model.addAttribute("products", products);
+//        return "show_product";
+//    }
+
+//    -------------------------Regex Search
+//    @RequestMapping(value = "/search")
+//    public String search(Model model, @RequestParam String search) {
+//    model.addAttribute("products", productService.searchProduct(search));
+//    model.addAttribute("search", search);
+//    return "products";
+//}
+
+
+
     @RequestMapping(path = "/products/edit/{id}", method = RequestMethod.GET)
     public String editProduct(Model model, @PathVariable(value = "id") String id) {
         model.addAttribute("product",productService.editProduct(id));
         return "edit";
     }
 
+
+
     @RequestMapping(path = "/products/delete/{id}", method = RequestMethod.GET)
     public String deleteProduct(@PathVariable(name = "id") String id) {
         return productService.deleteProduct(id);
     }
+
+    @RequestMapping(value = "search", method = RequestMethod.GET)
+    public String showStudentBySurname(@RequestParam (value = "search", required = false) String name, Model model) {
+        model.addAttribute("search", productService.listProductByName(name));
+        return "search";
+    }
+
 
 }

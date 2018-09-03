@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns="http://www.w3.org/1999/html">
+<head lang="en">
+    <title>Filter</title>
+    <!--<th:block th:include="layout/header"></th:block>-->
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="../../static/css/style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" >
+    </script>
+<script>
+$(function() {
+    var byProperty = [], byColor = [], byLocation = [];
+console.log(byProperty);
+
+		$("input[name=fl-colour]").on( "change", function() {
+
+			if (this.checked) {
+			    byProperty.push("[data-category~='" + $(this).attr("value") + "']");
+			}
+			else {
+			    removeA(byProperty, "[data-category~='" + $(this).attr("value") + "']");
+            }
+            console.log(byProperty);
+		});
+
+			$("input[name=fl-size]").on( "change", function() {
+			if (this.checked) byColor.push("[data-category~='" + $(this).attr("value") + "']");
+			else removeA(byColor, "[data-category~='" + $(this).attr("value") + "']");
+		});
+
+		$("input[name=fl-cont]").on( "change", function() {
+			if (this.checked) byLocation.push("[data-category~='" + $(this).attr("value") + "']");
+			else removeA(byLocation, "[data-category~='" + $(this).attr("value") + "']");
+		});
+
+		$("input").on( "change", function() {
+			var str = "Include items \n";
+			var selector = '', cselector = '', nselector = '';
+
+			var $lis = $('.flowers > div'),
+				$checked = $('input:checked');
+
+			if ($checked.length) {
+
+				if (byProperty.length) {
+					if (str == "Include items \n") {
+						str += "    " + "with (" +  byProperty.join(',') + ")\n";
+						$($('input[name=fl-colour]:checked')).each(function(index, byProperty){
+							if(selector === '') {
+								selector += "[data-category~='" + byProperty.id + "']";
+							} else {
+								selector += ",[data-category~='" + byProperty.id + "']";
+							}
+						});
+					} else {
+						str += "    AND " + "with (" +  byProperty.join(' OR ') + ")\n";
+						$($('input[name=fl-size]:checked')).each(function(index, byProperty){
+							selector += "[data-category~='" + byProperty.id + "']";
+						});
+					}
+				}
+
+				if (byColor.length) {
+					if (str == "Include items \n") {
+						str += "    " + "with (" +  byColor.join(' OR ') + ")\n";
+						$($('input[name=fl-size]:checked')).each(function(index, byColor){
+							if(selector === '') {
+								selector += "[data-category~='" + byColor.id + "']";
+							} else {
+								selector += ",[data-category~='" + byColor.id + "']";
+							}
+						});
+					} else {
+						str += "    AND " + "with (" +  byColor.join(' OR ') + ")\n";
+						$($('input[name=fl-size]:checked')).each(function(index, byColor){
+							if(cselector === '') {
+								cselector += "[data-category~='" + byColor.id + "']";
+							} else {
+								cselector += ",[data-category~='" + byColor.id + "']";
+							}
+						});
+					}
+				}
+
+				if (byLocation.length) {
+					if (str == "Include items \n") {
+						str += "    " + "with (" +  byLocation.join(' OR ') + ")\n";
+						$($('input[name=fl-cont]:checked')).each(function(index, byLocation){
+							if(selector === '') {
+								selector += "[data-category~='" + byLocation.id + "']";
+							} else {
+								selector += ",[data-category~='" + byLocation.id + "']";
+							}
+						});
+					} else {
+						str += "    AND " + "with (" +  byLocation.join(' OR ') + ")\n";
+						$($('input[name=fl-cont]:checked')).each(function(index, byLocation){
+							if(nselector === '') {
+								nselector += "[data-category~='" + byLocation.id + "']";
+							} else {
+								nselector += ",[data-category~='" + byLocation.id + "']";
+							}
+						});
+					}
+				}
+
+				$lis.hide();
+				console.log(selector);
+				console.log(cselector);
+				console.log(nselector);
+
+				if (cselector === '' && nselector === '') {
+					$('.flowers > div').filter(selector).show();
+				} else if (cselector === '') {
+					$('.flowers > div').filter(selector).filter(nselector).show();
+				} else if (nselector === '') {
+					$('.flowers > div').filter(selector).filter(cselector).show();
+				} else {
+					$('.flowers > div').filter(selector).filter(cselector).filter(nselector).show();
+				}
+
+			} else {
+				$lis.show();
+			}
+
+			$("#result").html(str);
+
+		});
+
+    function removeA(arr) {
+			var what, a = arguments, L = a.length, ax;
+			while (L > 1 && arr.length) {
+				what = a[--L];
+				while ((ax= arr.indexOf(what)) !== -1) {
+					arr.splice(ax, 1);
+				}
+			}
+			return arr;
+    }
+});
+
+
+</script>
+</head>
+<body>
+
+    <pre id=result> </pre>
+
+    <div class="flowers-wrap">
+
+        <h3 style="font-size:14px; font-weight:normal;">Available Flowers</h3>
+        <p style="font-size:12px;"><strong>Filter flowers by colour:</strong></p>
+        <form>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-colour" value="red" id="red" /> Red</label><br>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-colour" value="yellow" id="yellow" /> Yellow</label><br>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-colour" value="pink" id="pink" /> Pink</label><br>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-colour" value="purple" id="purple" /> Purple</label><br>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-colour" value="green" id="green" /> Green</label><br>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-colour" value="other" id="other" /> Other</label>
+        </form>
+        <p style="font-size:12px;"><strong>Filter flowers by size:</strong></p>
+        <form>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-size" value="tiny" id="tiny" /> Tiny</label><br>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-size" value="small" id="small" /> Small</label><br>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-size" value="medium" id="medium" /> Medium</label><br>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-size" value="large" id="large" /> Large</label><br>
+            <label style="font-size:12px;"><input type="checkbox" name="fl-size" value="giant" id="giant" /> Giant</label>
+        </form>
+
+    </div>
+
+    <div class="continents-wrap">
+
+        <h3 style="font-size:14px; font-weight:normal;">Available Continents</h3>
+
+        <div class="continents" style="font-size:12px;">
+            <div>Africa <input type="checkbox" name="fl-cont" value="africa" id="africa" /></div>
+            <div>Europe <input type="checkbox" name="fl-cont" value="europe" id="europe" /></div>
+            <div>Asia <input type="checkbox" name="fl-cont" value="asia" id="asia" /></div>
+            <div>North America <input type="checkbox" name="fl-cont" value="north-america" id="north-america" /></div>
+            <div>South America <input type="checkbox" name="fl-cont" value="south-america" id="south-america" /></div>
+            <div>Antarctica <input type="checkbox" name="fl-cont" value="antarctica" id="antarctica" /></div>
+            <div>Australasia <input type="checkbox" name="fl-cont" value="australasia" id="australasia" /></div>
+        </div>
+
+    </div>
+
+    <div class="flowers">
+        <div class="flower" data-id="aloe" data-category="green small medium africa">Aloe</div>
+        <div class="flower" data-id="lavendar" data-category="purple green medium africa europe">Lavender</div>
+        <div class="flower" data-id="stinging-nettle" data-category="green large africa europe asia">Stinging Nettle</div>
+        <div class="flower" data-id="gorse" data-category="green yellow large europe">Gorse</div>
+        <div class="flower" data-id="hemp" data-category="green large asia">Hemp</div>
+        <div class="flower" data-id="titan-arum" data-category="purple other giant asia">Titan Arum</div>
+        <div class="flower" data-id="golden-wattle" data-category="green yellow large australasia">Golden Wattle</div>
+        <div class="flower" data-id="purple-prairie-clover" data-category="purple green other medium north-america">Purple Prairie Clover</div>
+        <div class="flower" data-id="camellia" data-category="pink other large north-america">Camellia</div>
+        <div class="flower" data-id="scarlet-carnation" data-category="red medium north-america">Scarlet Carnation</div>
+        <div class="flower" data-id="indian-paintbrush" data-category="red medium north-america">Indian Paintbrush</div>
+        <div class="flower" data-id="moss-verbena" data-category="purple other small south-america">Moss Verbena</div>
+        <div class="flower" data-id="climbing-dayflower" data-category="blue tiny south-america">Climbing Dayflower</div>
+        <div class="flower" data-id="antarctic-pearlwort" data-category="green yellow large antarctica">Antarctic Pearlwort</div>
+    </div>
+
+</body>
+</html>

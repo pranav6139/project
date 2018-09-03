@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Arrays;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
@@ -76,6 +75,6 @@ public class ProjectApplication implements CommandLineRunner {
 //        user2.addRole("USER");
 //
 //        userRepository.save(user2);
-
+//
     }
 }
